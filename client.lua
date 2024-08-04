@@ -313,7 +313,7 @@ RegisterNUICallback('showOutMap', function(data, cb)
     if data.checked then
         Menu.isOutMapChecked = true
     else
-        Menu.isOutMapChecked = false
+        Menu.isOutMapChecked = true
     end
     TriggerEvent("hud:client:playHudChecklistSound")
 end)
@@ -937,10 +937,36 @@ CreateThread(function()
 
             local vehicle = GetVehiclePedIsIn(player)
 
-            if not (IsPedInAnyVehicle(player) and not IsThisModelABicycle(vehicle)) then
+            if not (IsPedInAnyVehicle(player) and not IsThisModelABicycle(vehicle)) and not GetEntityModel(player) == `mp_f_freemode_01` then
                 updatePlayerHud({
                     show,
                     GetEntityHealth(player) - 100,
+                    playerDead,
+                    GetPedArmour(player),
+                    thirst,
+                    hunger,
+                    stress,
+                    voice,
+                    LocalPlayer.state['radioChannel'],
+                    radioTalking,
+                    talking,
+                    armed,
+                    oxygen,
+                    GetPedParachuteState(player),
+                    -1,
+                    cruiseOn,
+                    nitroActive,
+                    harness,
+                    hp,
+                    math.ceil(GetEntitySpeed(vehicle) * speedMultiplier),
+                    -1,
+                    Menu.isCineamticModeChecked,
+                    dev,
+                })
+            else
+                updatePlayerHud({
+                    show,
+                    GetEntityHealth(player) - 75,
                     playerDead,
                     GetPedArmour(player),
                     thirst,
@@ -978,7 +1004,7 @@ CreateThread(function()
                 end
 
                 wasInVehicle = true
-                
+            if not GetEntityModel(player) == `mp_f_freemode_01` then 
                 updatePlayerHud({
                     show,
                     GetEntityHealth(player) - 100,
@@ -1004,6 +1030,33 @@ CreateThread(function()
                     Menu.isCineamticModeChecked,
                     dev,
                 })
+                else 
+                updatePlayerHud({
+                    show,
+                    GetEntityHealth(player) - 75,
+                    playerDead,
+                    GetPedArmour(player),
+                    thirst,
+                    hunger,
+                    stress,
+                    voice,
+                    LocalPlayer.state['radioChannel'],
+                    radioTalking,
+                    talking,
+                    armed,
+                    oxygen,
+                    GetPedParachuteState(player),
+                    nos,
+                    cruiseOn,
+                    nitroActive,
+                    harness,
+                    hp,
+                    math.ceil(GetEntitySpeed(vehicle) * speedMultiplier),
+                    (GetVehicleEngineHealth(vehicle) / 10),
+                    Menu.isCineamticModeChecked,
+                    dev,
+                })
+            end
 
                 updateVehicleHud({
                     show,
@@ -1103,21 +1156,21 @@ end)
 
 -- Harness Check / Seatbelt Check
 
--- CreateThread(function()
---     while true do
---         Wait(1500)
---         if LocalPlayer.state.isLoggedIn then
---             local ped = PlayerPedId()
---             if IsPedInAnyVehicle(ped, false) then
---                 hasHarness()
---                 local veh = GetEntityModel(GetVehiclePedIsIn(ped, false))
---                 if seatbeltOn ~= true and IsThisModelACar(veh) then
---                     TriggerEvent("InteractSound_CL:PlayOnOne", "beltalarm", 0.6)
---                 end
---             end
---         end
---     end
--- end)
+CreateThread(function()
+    while true do
+        Wait(1500)
+        if LocalPlayer.state.isLoggedIn then
+            local ped = PlayerPedId()
+            if IsPedInAnyVehicle(ped, false) then
+                hasHarness()
+                local veh = GetEntityModel(GetVehiclePedIsIn(ped, false))
+                if seatbeltOn ~= true and IsThisModelACar(veh) then
+                    TriggerEvent("InteractSound_CL:PlayOnOne", "beltalarm", 0.6)
+                end
+            end
+        end
+    end
+end)
 
 
 -- Stress Gain
